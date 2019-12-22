@@ -1,4 +1,4 @@
-import Editor from "@monaco-editor/react";
+import { ControlledEditor } from "@monaco-editor/react";
 import {
   Button,
   Col,
@@ -19,7 +19,7 @@ import React, { useEffect, useState } from "react";
 
 const { Option } = Select;
 
-const initCode = `module.exports = async () => {\n  // 请编写代码，参考：https://work.weixin.qq.com/help?person_id=1&doc_id=13376\n  // 最后返回企业微信机器人的消息类型及数据格式\n  return null;\n}`;
+const initCode = `module.exports = async () => {\n  // 请编写代码，参考：https://work.weixin.qq.com/help?person_id=1&doc_id=13376\n  // 最后返回企业微信群机器人的消息类型及数据格式\n  return null;\n}`;
 
 function EditScheduleDrawer({ schedule, open, onClose, onSave }) {
   const [enable, setEnable] = useState(false);
@@ -66,7 +66,7 @@ function EditScheduleDrawer({ schedule, open, onClose, onSave }) {
       await setScheduleBots({
         variables: { id: schedule.id, botIds }
       });
-      message.success("保存定时任务成功");
+      message.success("保存成功");
     } else {
       const {
         data: {
@@ -78,7 +78,7 @@ function EditScheduleDrawer({ schedule, open, onClose, onSave }) {
       await setScheduleBots({
         variables: { id, botIds }
       });
-      message.success("创建定时任务成功");
+      message.success("创建成功");
     }
 
     onSave();
@@ -88,7 +88,7 @@ function EditScheduleDrawer({ schedule, open, onClose, onSave }) {
   return (
     <Drawer
       bodyStyle={{ paddingBottom: 80 }}
-      title={schedule ? "编辑定时任务" : "创建定时任务"}
+      title={schedule ? "编辑" : "创建"}
       visible={open}
       width={800}
       onClose={onClose}
@@ -96,16 +96,16 @@ function EditScheduleDrawer({ schedule, open, onClose, onSave }) {
       <Form hideRequiredMark layout="vertical">
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="定时任务名称">
+            <Form.Item label="名称">
               <Switch checked={enable} onChange={setEnable} />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="定时任务名称">
+            <Form.Item label="名称">
               <Input
-                placeholder="请输入定时任务名称"
+                placeholder="请输入名称"
                 value={name}
                 onChange={event => setName(event.target.value)}
               />
@@ -114,7 +114,7 @@ function EditScheduleDrawer({ schedule, open, onClose, onSave }) {
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="定时任务表达式">
+            <Form.Item label="表达式">
               <Input
                 placeholder="*/1 * * * *"
                 value={cron}
@@ -126,22 +126,22 @@ function EditScheduleDrawer({ schedule, open, onClose, onSave }) {
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item label="代码">
-              <Editor
+              <ControlledEditor
                 height="500px"
                 language="javascript"
                 theme="dark"
                 value={code}
-                onChange={setCode}
+                onChange={(event, value) => setCode(value)}
               />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="微信机器人">
+            <Form.Item label="微信群机器人">
               <Select
                 mode="multiple"
-                style={{ width: "100%", }}
+                style={{ width: "100%" }}
                 value={botIds}
                 onChange={setBotIds}
               >
@@ -162,10 +162,10 @@ function EditScheduleDrawer({ schedule, open, onClose, onSave }) {
           borderTop: "1px solid #e9e9e9",
           padding: "10px 16px",
           background: "#fff",
-          textAlign: "right",
+          textAlign: "right"
         }}
       >
-        <Button style={{ marginRight: 8, }} onClick={onClose}>
+        <Button style={{ marginRight: 8 }} onClick={onClose}>
           取消
         </Button>
         <Button

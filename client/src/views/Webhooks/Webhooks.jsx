@@ -19,7 +19,7 @@ function Webhooks() {
   return (
     <>
       <Helmet>
-        <title>企业微信机器人网关 - 网关</title>
+        <title>企业微信群机器人网关 - Webhook</title>
       </Helmet>
 
       <Toolbar>
@@ -30,7 +30,7 @@ function Webhooks() {
             setOpen(true);
           }}
         >
-          <Icon type="plus" /> 创建网关
+          <Icon type="plus" /> 创建
         </Button>
       </Toolbar>
 
@@ -44,7 +44,7 @@ function Webhooks() {
             render: name => <Ellipsis>{name}</Ellipsis>
           },
           {
-            title: "微信机器人",
+            title: "微信群机器人",
             dataIndex: "bots",
             key: "bots",
             render: bots => (
@@ -89,7 +89,7 @@ function Webhooks() {
                   cancelText="取消"
                   okText="删除"
                   okType="danger"
-                  title="你确定要删除这个网关吗？"
+                  title="你确定要删除吗？"
                   onConfirm={async () => {
                     await removeWebhook({ variables: { id: record.id } });
                     message.success(`删除 ${record.name} 成功`);

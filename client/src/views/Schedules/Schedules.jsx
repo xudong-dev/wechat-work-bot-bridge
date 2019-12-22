@@ -21,7 +21,7 @@ function Schedules() {
   return (
     <>
       <Helmet>
-        <title>企业微信机器人网关 - 定时任务</title>
+        <title>企业微信群机器人网关 - 定时任务</title>
       </Helmet>
 
       <Toolbar>
@@ -32,7 +32,7 @@ function Schedules() {
             setOpen(true);
           }}
         >
-          <Icon type="plus" /> 创建定时任务
+          <Icon type="plus" /> 创建
         </Button>
       </Toolbar>
 
@@ -52,7 +52,7 @@ function Schedules() {
             width: 200
           },
           {
-            title: "微信机器人",
+            title: "微信群机器人",
             dataIndex: "bots",
             key: "bots",
             render: bots => (
@@ -84,7 +84,7 @@ function Schedules() {
                   cancelText="取消"
                   okText="删除"
                   okType="danger"
-                  title="你确定要删除这个网关吗？"
+                  title="你确定要删除吗？"
                   onConfirm={async () => {
                     await removeSchedule({ variables: { id: record.id } });
                     message.success(`删除 ${record.name} 成功`);

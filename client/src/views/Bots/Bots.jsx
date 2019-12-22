@@ -19,7 +19,7 @@ function Bots() {
   return (
     <>
       <Helmet>
-        <title>企业微信机器人网关 - 微信机器人</title>
+        <title>企业微信群机器人网关 - 微信群机器人</title>
       </Helmet>
 
       <Toolbar>
@@ -30,7 +30,7 @@ function Bots() {
             setOpen(true);
           }}
         >
-          <Icon type="plus" /> 创建微信机器人
+          <Icon type="plus" /> 添加
         </Button>
       </Toolbar>
 
@@ -81,7 +81,7 @@ function Bots() {
                   cancelText="取消"
                   okText="删除"
                   okType="danger"
-                  title="你确定要删除这个微信机器人吗？"
+                  title="你确定要删除吗？"
                   onConfirm={async () => {
                     await removeBot({ variables: { id: record.id } });
                     message.success(`删除 ${record.name} 成功`);

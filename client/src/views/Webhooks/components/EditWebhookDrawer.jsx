@@ -1,4 +1,4 @@
-import Editor from "@monaco-editor/react";
+import { ControlledEditor } from "@monaco-editor/react";
 import { Button, Col, Drawer, Form, Input, message, Row, Select } from "antd";
 import useBots from "hooks/useBots";
 import useCreateWebhook from "hooks/useCreateWebhook";
@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 
 const { Option } = Select;
 
-const initCode = `module.exports = async ({ headers, query, body }) => {\n  // 请编写网关代码，参考：https://work.weixin.qq.com/help?person_id=1&doc_id=13376\n  // 最后返回企业微信机器人的消息类型及数据格式\n  return null;\n}`;
+const initCode = `module.exports = async ({ headers, query, body }) => {\n  // 请编写代码，参考：https://work.weixin.qq.com/help?person_id=1&doc_id=13376\n  // 最后返回企业微信群机器人的消息类型及数据格式\n  return null;\n}`;
 
 function EditWebhookDrawer({ webhook, open, onClose, onSave }) {
   const [name, setName] = useState("");
@@ -44,7 +44,7 @@ function EditWebhookDrawer({ webhook, open, onClose, onSave }) {
       await setWebhookBots({
         variables: { id: webhook.id, botIds }
       });
-      message.success("保存网关成功");
+      message.success("保存成功");
     } else {
       const {
         data: {
@@ -54,7 +54,7 @@ function EditWebhookDrawer({ webhook, open, onClose, onSave }) {
       await setWebhookBots({
         variables: { id, botIds }
       });
-      message.success("创建网关成功");
+      message.success("创建成功");
     }
 
     onSave();
@@ -64,7 +64,7 @@ function EditWebhookDrawer({ webhook, open, onClose, onSave }) {
   return (
     <Drawer
       bodyStyle={{ paddingBottom: 80 }}
-      title={webhook ? "编辑网关" : "创建网关"}
+      title={webhook ? "编辑" : "创建"}
       visible={open}
       width={800}
       onClose={onClose}
@@ -72,9 +72,9 @@ function EditWebhookDrawer({ webhook, open, onClose, onSave }) {
       <Form hideRequiredMark layout="vertical">
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="网关名称">
+            <Form.Item label="名称">
               <Input
-                placeholder="请输入网关名称"
+                placeholder="请输入名称"
                 value={name}
                 onChange={event => setName(event.target.value)}
               />
@@ -84,22 +84,22 @@ function EditWebhookDrawer({ webhook, open, onClose, onSave }) {
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item label="代码">
-              <Editor
+              <ControlledEditor
                 height="500px"
                 language="javascript"
                 theme="dark"
                 value={code}
-                onChange={setCode}
+                onChange={(event, value) => setCode(value)}
               />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="微信机器人">
+            <Form.Item label="微信群机器人">
               <Select
                 mode="multiple"
-                style={{ width: "100%", }}
+                style={{ width: "100%" }}
                 value={botIds}
                 onChange={setBotIds}
               >
@@ -120,10 +120,10 @@ function EditWebhookDrawer({ webhook, open, onClose, onSave }) {
           borderTop: "1px solid #e9e9e9",
           padding: "10px 16px",
           background: "#fff",
-          textAlign: "right",
+          textAlign: "right"
         }}
       >
-        <Button style={{ marginRight: 8, }} onClick={onClose}>
+        <Button style={{ marginRight: 8 }} onClick={onClose}>
           取消
         </Button>
         <Button

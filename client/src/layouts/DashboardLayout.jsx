@@ -44,7 +44,7 @@ const menu = [
     path: "/schedules"
   },
   {
-    name: "微信机器人",
+    name: "微信群机器人",
     path: "/bots"
   }
 ];
@@ -90,7 +90,7 @@ function DashboardLayout({ route }) {
       <StyledContent>
         <Card>{renderRoutes(route.routes)}</Card>
       </StyledContent>
-      <StyledFooter>企业微信机器人网关 ©2019</StyledFooter>
+      <StyledFooter>企业微信群机器人网关 ©2019</StyledFooter>
     </StyledLayout>
   );
 }

@@ -26,10 +26,10 @@ function EditBotDrawer({ bot, open, onClose, onSave }) {
       await updateBot({
         variables: { id: bot.id, input: { name, webhookUrl } }
       });
-      message.success("保存微信机器人成功");
+      message.success("保存成功");
     } else {
       await createBot({ variables: { input: { name, webhookUrl } } });
-      message.success("创建微信机器人成功");
+      message.success("添加成功");
     }
 
     onSave();
@@ -39,7 +39,7 @@ function EditBotDrawer({ bot, open, onClose, onSave }) {
   return (
     <Drawer
       bodyStyle={{ paddingBottom: 80 }}
-      title={bot ? "编辑微信机器人" : "创建微信机器人"}
+      title={bot ? "编辑" : "添加"}
       visible={open}
       width={800}
       onClose={onClose}
@@ -47,9 +47,9 @@ function EditBotDrawer({ bot, open, onClose, onSave }) {
       <Form hideRequiredMark layout="vertical">
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="微信机器人名称">
+            <Form.Item label="名称">
               <Input
-                placeholder="请输入微信机器人名称"
+                placeholder="请输入名称"
                 value={name}
                 onChange={event => setName(event.target.value)}
               />
@@ -58,9 +58,9 @@ function EditBotDrawer({ bot, open, onClose, onSave }) {
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="微信机器人 Webhook 地址">
+            <Form.Item label="Webhook 地址">
               <Input
-                placeholder="请输入微信机器人 Webhook 地址"
+                placeholder="请输入 Webhook 地址"
                 value={webhookUrl}
                 onChange={event => setWebhookUrl(event.target.value)}
               />
@@ -77,10 +77,10 @@ function EditBotDrawer({ bot, open, onClose, onSave }) {
           borderTop: "1px solid #e9e9e9",
           padding: "10px 16px",
           background: "#fff",
-          textAlign: "right",
+          textAlign: "right"
         }}
       >
-        <Button style={{ marginRight: 8, }} onClick={onClose}>
+        <Button style={{ marginRight: 8 }} onClick={onClose}>
           取消
         </Button>
         <Button
