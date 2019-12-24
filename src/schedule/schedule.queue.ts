@@ -1,43 +1,20 @@
-/* eslint-disable class-methods-use-this */
+import { Injectable } from "@nestjs/common";
+import { Queue } from "bullmq";
+import url from "url";
 
-import axios from "axios";
-import { Job } from "bull";
-import { OnQueueCompleted, OnQueueFailed, Process, Processor } from "nest-bull";
+const { REDIS_URL } = process.env;
 
-import { SandboxService } from "../sandbox/sandbox.service";
-import { Schedule } from "./schedule.entity";
-
-@Processor({ name: "schedule" })
-export class ScheduleQueue {
-  public constructor(private readonly sandboxService: SandboxService) {
-    return this;
-  }
-
-  @Process({ name: "schedule" })
-  public async process(job: Job<Schedule["id"]>): Promise<void> {
-    const schedule = await Schedule.findOne({
-      where: { id: job.data },
-      relations: ["bots"]
+@Injectable()
+export class ScheduleQueue extends Queue {
+  public constructor() {
+    super("schedule", {
+      connection: {
+        ...(url.parse(REDIS_URL).auth
+          ? { password: url.parse(REDIS_URL).auth.split(":")[1] }
+          : {}),
+        host: url.parse(REDIS_URL).hostname,
+        port: Number(url.parse(REDIS_URL).port)
+      }
     });
-
-    const { result, logs } = await this.sandboxService.run(schedule.code);
-
-    console.log(`[${schedule.id}]`, result, logs);
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const bot of schedule.bots) {
-      // eslint-disable-next-line no-await-in-loop
-      await axios.post(bot.webhookUrl, result);
-    }
-  }
-
-  @OnQueueCompleted()
-  public onCompleted(job: Job): void {
-    job.queue.clean(0, "completed");
-  }
-
-  @OnQueueFailed()
-  public onFailed(job: Job): void {
-    job.queue.clean(0, "failed");
   }
 }

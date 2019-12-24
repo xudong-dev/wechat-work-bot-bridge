@@ -1,16 +1,12 @@
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
-import { Queue } from "bull";
 import _ from "lodash";
-import { InjectQueue } from "nest-bull";
 
 import { Schedule } from "./schedule.entity";
+import { ScheduleQueue } from "./schedule.queue";
 
 @Injectable()
 export class ScheduleService implements OnApplicationBootstrap {
-  public constructor(
-    @InjectQueue("schedule")
-    private readonly scheduleQueue: Queue<Schedule["id"]>
-  ) {
+  public constructor(private readonly scheduleQueue: ScheduleQueue) {
     return this;
   }
 

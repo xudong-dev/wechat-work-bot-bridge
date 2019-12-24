@@ -1,7 +1,5 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { Queue } from "bull";
-import { InjectQueue } from "nest-bull";
 import { ID } from "type-graphql";
 import { In } from "typeorm";
 
@@ -15,11 +13,7 @@ import { ScheduleService } from "./schedule.service";
 @UseGuards(AuthGuard)
 @Resolver(() => Schedule)
 export class ScheduleResolver {
-  public constructor(
-    @InjectQueue("schedule")
-    private readonly scheduleQueue: Queue<Schedule["id"]>,
-    private readonly scheduleService: ScheduleService
-  ) {
+  public constructor(private readonly scheduleService: ScheduleService) {
     return this;
   }
 
