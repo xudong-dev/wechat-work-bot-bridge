@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { Job } from "bull";
-import { Process, Processor } from "nest-bull";
+import { OnQueueCompleted, OnQueueFailed, Process, Processor } from "nest-bull";
 
 import { SandboxService } from "../sandbox/sandbox.service";
 import { Schedule } from "./schedule.entity";
@@ -29,5 +29,15 @@ export class ScheduleQueue {
       // eslint-disable-next-line no-await-in-loop
       await axios.post(bot.webhookUrl, result);
     }
+  }
+
+  @OnQueueCompleted()
+  public onCompleted(job: Job): void {
+    job.queue.clean(0, "completed");
+  }
+
+  @OnQueueFailed()
+  public onFailed(job: Job): void {
+    job.queue.clean(0, "failed");
   }
 }
