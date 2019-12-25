@@ -16,23 +16,15 @@ export class ScheduleService implements OnApplicationBootstrap {
     // 启动时检查清除无效的可重复的任务
     await Promise.all(
       (await this.scheduleQueue.getRepeatableJobs())
-        .filter(({ id, cron }) => !_.find(schedules, { id, cron }))
+        .filter(({ name, cron }) => !_.find(schedules, { id: name, cron }))
         .map(({ key }) => this.scheduleQueue.removeRepeatableByKey(key))
     );
 
-    await Promise.all(
-      schedules.map(schedule =>
-        this.scheduleQueue.add("schedule", schedule.id, {
-          jobId: schedule.id,
-          repeat: { cron: schedule.cron }
-        })
-      )
-    );
+    await Promise.all(schedules.map(schedule => this.start(schedule)));
   }
 
   public async start(schedule: Schedule): Promise<void> {
-    await this.scheduleQueue.add("schedule", schedule.id, {
-      jobId: schedule.id,
+    await this.scheduleQueue.add(schedule.id, schedule.id, {
       repeat: { cron: schedule.cron }
     });
   }
