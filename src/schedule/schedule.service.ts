@@ -32,7 +32,7 @@ export class ScheduleService implements OnApplicationBootstrap {
   public async stop(schedule: Schedule): Promise<void> {
     await Promise.all(
       (await this.scheduleQueue.getRepeatableJobs())
-        .filter(info => info.id === schedule.id)
+        .filter(({ name }) => name === schedule.id)
         .map(info => this.scheduleQueue.removeRepeatableByKey(info.key))
     );
   }
