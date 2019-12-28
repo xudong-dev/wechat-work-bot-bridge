@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { LoggerModule } from "nestjs-pino";
 import { join } from "path";
 
 import { AuthModule } from "./auth/auth.module";
@@ -20,6 +21,7 @@ const { DATABASE_URL, DATABASE_SSL } = process.env;
 
 @Module({
   imports: [
+    LoggerModule.forRoot(),
     GraphQLModule.forRoot({
       tracing: true,
       autoSchemaFile: true,

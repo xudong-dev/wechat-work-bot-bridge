@@ -1,12 +1,16 @@
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import _ from "lodash";
+import { PinoLogger } from "nestjs-pino";
 
 import { Schedule } from "./schedule.entity";
 import { ScheduleQueue } from "./schedule.queue";
 
 @Injectable()
 export class ScheduleService implements OnApplicationBootstrap {
-  public constructor(private readonly scheduleQueue: ScheduleQueue) {
+  public constructor(
+    private readonly scheduleQueue: ScheduleQueue,
+    private readonly logger: PinoLogger
+  ) {
     return this;
   }
 
@@ -17,19 +21,36 @@ export class ScheduleService implements OnApplicationBootstrap {
     await Promise.all(
       (await this.scheduleQueue.getRepeatableJobs())
         .filter(({ name, cron }) => !_.find(schedules, { id: name, cron }))
-        .map(({ key }) => this.scheduleQueue.removeRepeatableByKey(key))
+        .map(({ name, key }) => {
+          this.logger.info({ name, key }, "remove repeatable");
+          return this.scheduleQueue.removeRepeatableByKey(key);
+        })
     );
 
     await Promise.all(schedules.map(schedule => this.start(schedule)));
   }
 
-  public async start(schedule: Schedule): Promise<void> {
+  public async start(schedule: Schedule, log = true): Promise<void> {
+    if (log) {
+      this.logger.info(
+        { id: schedule.id, cron: schedule.cron },
+        "schedule start"
+      );
+    }
+
     await this.scheduleQueue.add(schedule.id, schedule.id, {
       repeat: { cron: schedule.cron }
     });
   }
 
-  public async stop(schedule: Schedule): Promise<void> {
+  public async stop(schedule: Schedule, log = true): Promise<void> {
+    if (log) {
+      this.logger.info(
+        { id: schedule.id, cron: schedule.cron },
+        "schedule stop"
+      );
+    }
+
     await Promise.all(
       (await this.scheduleQueue.getRepeatableJobs())
         .filter(({ name }) => name === schedule.id)
@@ -38,7 +59,12 @@ export class ScheduleService implements OnApplicationBootstrap {
   }
 
   public async restart(schedule: Schedule): Promise<void> {
-    await this.stop(schedule);
-    await this.start(schedule);
+    this.logger.info(
+      { id: schedule.id, cron: schedule.cron },
+      "schedule restart"
+    );
+
+    await this.stop(schedule, false);
+    await this.start(schedule, false);
   }
 }

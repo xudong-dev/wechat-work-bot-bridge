@@ -1,12 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fork } from "child_process";
-import { join } from "path";
+
+interface SandboxResult {
+  value?: any;
+  logs: string;
+}
 
 export class SandboxService {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public run(code: string, context?: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+  public async run(code: string, args: any[] = []): Promise<SandboxResult> {
+    const result: SandboxResult = await new Promise((resolve, reject) => {
       let logs = "";
-      const child = fork(join(process.cwd(), "executor.js"), [], {
+      const child = fork(require.resolve("../executor"), [], {
         stdio: "pipe"
       });
 
@@ -26,7 +30,7 @@ export class SandboxService {
 
         const watcher = setTimeout(
           () => child.kill(),
-          Number(process.env.RUN_TIMEOUT || 60 * 1000)
+          Number(process.env.RUN_TIMEOUT || 10 * 1000)
         );
 
         child.on("close", () => {
@@ -34,16 +38,18 @@ export class SandboxService {
           resolve({ logs });
         });
 
-        child.on("message", result => {
+        child.on("message", value => {
           clearTimeout(watcher);
-          resolve({ result, logs });
+          resolve({ value, logs });
         });
 
-        child.send({ code, context });
+        child.send({ code, args });
       } catch (err) {
         child.kill();
         throw err;
       }
     });
+
+    return result;
   }
 }

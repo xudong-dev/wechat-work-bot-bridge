@@ -9,13 +9,17 @@ import {
   Query
 } from "@nestjs/common";
 import axios from "axios";
+import { PinoLogger } from "nestjs-pino";
 
 import { SandboxService } from "../sandbox/sandbox.service";
 import { Webhook } from "./webhook.entity";
 
 @Controller("webhooks")
 export class WebhookController {
-  public constructor(private readonly sandboxService: SandboxService) {
+  public constructor(
+    private readonly sandboxService: SandboxService,
+    private readonly logger: PinoLogger
+  ) {
     return this;
   }
 
@@ -42,23 +46,25 @@ export class WebhookController {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() body?: any
   ): Promise<{ status: string }> {
+    this.logger.info({ id }, "call webhook");
+
     const webhook = await Webhook.findOne({
       where: { id },
       relations: ["bots"]
     });
 
-    const { result, logs } = await this.sandboxService.run(webhook.code, {
-      headers,
-      query,
-      body
-    });
-
-    console.log(`[${webhook.id}]`, result, logs);
+    const { value } = await this.sandboxService.run(webhook.code, [
+      {
+        headers,
+        query,
+        body
+      }
+    ]);
 
     // eslint-disable-next-line no-restricted-syntax
     for (const bot of webhook.bots) {
       // eslint-disable-next-line no-await-in-loop
-      await axios.post(bot.webhookUrl, result);
+      await axios.post(bot.webhookUrl, value);
     }
 
     return { status: "success" };

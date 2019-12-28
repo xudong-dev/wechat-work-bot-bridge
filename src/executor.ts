@@ -1,12 +1,11 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { NodeVM } = require("vm2");
+import { NodeVM } from "vm2";
 
 process.on("uncaughtException", err => {
   process.stderr.write(err.toString());
   process.exit(1);
 });
 
-process.on("message", ({ code = "", context = {} }) => {
+process.on("message", ({ code = "", args = [] }) => {
   const fn = new NodeVM({
     console: "inherit",
     require: {
@@ -18,7 +17,8 @@ process.on("message", ({ code = "", context = {} }) => {
           "numeral",
           "axios",
           "bcryptjs"
-        ]
+        ],
+        transitive: true
       }
     }
   }).run(code, __filename);
@@ -29,7 +29,13 @@ process.on("message", ({ code = "", context = {} }) => {
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   (async () => {
-    process.send((await fn(context)) || null);
+    try {
+      process.send((await fn(...args)) || null);
+    } catch (err) {
+      console.error(err);
+      process.exit(1);
+    }
+
     process.exit(0);
   })();
 });
