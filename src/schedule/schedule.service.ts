@@ -1,28 +1,33 @@
+import { InjectQueue } from "@nestjs/bull";
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
+import { Queue } from "bull";
 import _ from "lodash";
 import { PinoLogger } from "nestjs-pino";
 
 import { Schedule } from "./schedule.entity";
-import { ScheduleQueue } from "./schedule.queue";
 
 @Injectable()
 export class ScheduleService implements OnApplicationBootstrap {
   public constructor(
-    private readonly scheduleQueue: ScheduleQueue,
+    @InjectQueue("schedule")
+    private readonly scheduleQueue: Queue<Schedule["id"]>,
     private readonly logger: PinoLogger
   ) {
     return this;
   }
 
   public async onApplicationBootstrap(): Promise<void> {
+    this.scheduleQueue.on("completed", job => job.remove());
+    this.scheduleQueue.on("failed", job => job.remove());
+
     const schedules = await Schedule.find({ where: { enable: true } });
 
     // 启动时检查清除无效的可重复的任务
     await Promise.all(
       (await this.scheduleQueue.getRepeatableJobs())
-        .filter(({ name, cron }) => !_.find(schedules, { id: name, cron }))
-        .map(({ name, key }) => {
-          this.logger.info({ name, key }, "remove repeatable");
+        .filter(({ id, cron }) => !_.find(schedules, { id, cron }))
+        .map(({ id, key }) => {
+          this.logger.info({ id, key }, "remove repeatable");
           return this.scheduleQueue.removeRepeatableByKey(key);
         })
     );
@@ -38,7 +43,8 @@ export class ScheduleService implements OnApplicationBootstrap {
       );
     }
 
-    await this.scheduleQueue.add(schedule.id, schedule.id, {
+    await this.scheduleQueue.add("schedule", schedule.id, {
+      jobId: schedule.id,
       repeat: { cron: schedule.cron }
     });
   }
@@ -53,8 +59,11 @@ export class ScheduleService implements OnApplicationBootstrap {
 
     await Promise.all(
       (await this.scheduleQueue.getRepeatableJobs())
-        .filter(({ name }) => name === schedule.id)
-        .map(info => this.scheduleQueue.removeRepeatableByKey(info.key))
+        .filter(({ id }) => id === schedule.id)
+        .map(({ id, key }) => {
+          this.logger.info({ id, key }, "remove repeatable");
+          return this.scheduleQueue.removeRepeatableByKey(key);
+        })
     );
   }
 

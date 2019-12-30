@@ -53,7 +53,7 @@ export class WebhookController {
       relations: ["bots"]
     });
 
-    const value = await this.sandboxService.run(webhook.code, [
+    const { value } = await this.sandboxService.run(webhook.code, [
       {
         headers,
         query,
