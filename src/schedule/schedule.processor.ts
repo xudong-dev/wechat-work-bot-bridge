@@ -18,7 +18,7 @@ import { Schedule } from "./schedule.entity";
 class ProcessorModule {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-let processor = async (job: Job): Promise<void> => {};
+let processor = async (job: Job<Schedule["id"]>): Promise<void> => {};
 
 (async (): Promise<void> => {
   const app = await NestFactory.create(ProcessorModule, { logger: false });
@@ -28,7 +28,7 @@ let processor = async (job: Job): Promise<void> => {};
   const logger = await app.resolve(PinoLogger);
   const sandboxService = app.get(SandboxService);
 
-  processor = async (job: Job): Promise<void> => {
+  processor = async (job: Job<Schedule["id"]>): Promise<void> => {
     logger.info({ id: job.data }, "call schedule");
 
     const schedule = await Schedule.findOne({
@@ -47,4 +47,4 @@ let processor = async (job: Job): Promise<void> => {};
 })();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default (job: Job): Promise<any> => processor(job);
+export default (job: Job<Schedule["id"]>): Promise<any> => processor(job);
