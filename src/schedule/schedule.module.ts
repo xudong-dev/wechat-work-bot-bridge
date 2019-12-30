@@ -1,11 +1,10 @@
 import { BullModule } from "@nestjs/bull";
 import { Module } from "@nestjs/common";
-import os from "os";
 
 import { ScheduleResolver } from "./schedule.resolver";
 import { ScheduleService } from "./schedule.service";
 
-const { REDIS_URL, WEB_CONCURRENCY } = process.env;
+const { REDIS_URL } = process.env;
 
 @Module({
   imports: [
@@ -14,7 +13,7 @@ const { REDIS_URL, WEB_CONCURRENCY } = process.env;
       redis: REDIS_URL,
       processors: [
         {
-          concurrency: Number(WEB_CONCURRENCY || os.cpus.length),
+          concurrency: 50,
           name: "schedule",
           path: require.resolve("./schedule.processor")
         }
