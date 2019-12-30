@@ -28,6 +28,8 @@ let processor = async (job: Job<Schedule["id"]>): Promise<void> => {};
   const logger = await app.resolve(PinoLogger);
   const sandboxService = app.get(SandboxService);
 
+  logger.info("schedule processor start");
+
   processor = async (job: Job<Schedule["id"]>): Promise<void> => {
     logger.info({ id: job.data }, "call schedule");
 
