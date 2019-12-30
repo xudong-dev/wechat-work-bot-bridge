@@ -24,6 +24,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/bull": "0.0.1-beta.4",
     "@nestjs/common": "^6.10.12",
     "@nestjs/config": "0.0.7",
     "@nestjs/core": "^6.10.12",
@@ -36,7 +37,7 @@
     "apollo-server-express": "^2.9.14",
     "axios": "^0.19.0",
     "bcryptjs": "^2.4.3",
-    "bullmq": "^1.6.2",
+    "bull": "^3.12.1",
     "dotenv": "^8.2.0",
     "graphql": "^14.5.8",
     "graphql-tools": "^4.0.6",
@@ -64,6 +65,7 @@
     "@nestjs/schematics": "^6.7.6",
     "@nestjs/testing": "^6.10.12",
     "@types/bcryptjs": "^2.4.2",
+    "@types/bull": "^3.10.6",
     "@types/express": "^4.17.1",
     "@types/graphql-type-json": "^0.3.2",
     "@types/inflection": "^1.5.28",
