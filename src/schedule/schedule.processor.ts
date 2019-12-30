@@ -43,7 +43,7 @@ let processor = async (job: Job<Schedule["id"]>): Promise<void> => {};
         schedule.bots.map(bot =>
           (async (): Promise<void> => {
             try {
-              await axios.post(bot.webhookUrl, value);
+              await axios.post(bot.webhookUrl, value, { timeout: 10000 });
             } catch (err) {
               logger.error(
                 { id: bot.id, webhookUrl: bot.webhookUrl },

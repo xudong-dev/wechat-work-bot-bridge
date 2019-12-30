@@ -34,7 +34,7 @@ export class SandboxService {
 
         const watcher = setTimeout(
           () => child.kill(),
-          Number(SANDBOX_TIMEOUT || 30 * 1000)
+          Number(SANDBOX_TIMEOUT || 30000)
         );
 
         child.on("close", () => {

@@ -66,7 +66,7 @@ export class WebhookController {
         webhook.bots.map(bot =>
           (async (): Promise<void> => {
             try {
-              await axios.post(bot.webhookUrl, value);
+              await axios.post(bot.webhookUrl, value, { timeout: 10000 });
             } catch (err) {
               this.logger.error(
                 { id: bot.id, webhookUrl: bot.webhookUrl },
