@@ -61,10 +61,21 @@ export class WebhookController {
       }
     ]);
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const bot of webhook.bots) {
-      // eslint-disable-next-line no-await-in-loop
-      await axios.post(bot.webhookUrl, value);
+    if (value) {
+      await Promise.all(
+        webhook.bots.map(bot =>
+          (async (): Promise<void> => {
+            try {
+              await axios.post(bot.webhookUrl, value);
+            } catch (err) {
+              this.logger.error(
+                { id: bot.id, webhookUrl: bot.webhookUrl },
+                "call bot error"
+              );
+            }
+          })()
+        )
+      );
     }
 
     return { status: "success" };

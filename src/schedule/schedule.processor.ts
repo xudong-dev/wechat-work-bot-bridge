@@ -38,10 +38,21 @@ let processor = async (job: Job<Schedule["id"]>): Promise<void> => {};
 
     const { value } = await sandboxService.run(schedule.code);
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const bot of schedule.bots) {
-      // eslint-disable-next-line no-await-in-loop
-      await axios.post(bot.webhookUrl, value);
+    if (value) {
+      await Promise.all(
+        schedule.bots.map(bot =>
+          (async (): Promise<void> => {
+            try {
+              await axios.post(bot.webhookUrl, value);
+            } catch (err) {
+              logger.error(
+                { id: bot.id, webhookUrl: bot.webhookUrl },
+                "call bot error"
+              );
+            }
+          })()
+        )
+      );
     }
   };
 })();
