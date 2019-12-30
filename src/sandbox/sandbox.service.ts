@@ -1,55 +1,29 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { fork } from "child_process";
-
-interface SandboxResult {
-  value?: any;
-  logs: string;
-}
+import { NodeVM } from "vm2";
 
 export class SandboxService {
-  public async run(code: string, args: any[] = []): Promise<SandboxResult> {
-    const result: SandboxResult = await new Promise((resolve, reject) => {
-      let logs = "";
-      const child = fork(require.resolve("../executor"), [], {
-        stdio: "pipe"
-      });
-
-      child.on("error", reject);
-
-      try {
-        child.stdout.setEncoding("utf8");
-        child.stderr.setEncoding("utf8");
-
-        child.stdout.on("data", (data): void => {
-          logs += data;
-        });
-
-        child.stderr.on("data", (data): void => {
-          logs += data;
-        });
-
-        const watcher = setTimeout(
-          () => child.kill(),
-          Number(process.env.RUN_TIMEOUT || 10 * 1000)
-        );
-
-        child.on("close", () => {
-          clearTimeout(watcher);
-          resolve({ logs });
-        });
-
-        child.on("message", value => {
-          clearTimeout(watcher);
-          resolve({ value, logs });
-        });
-
-        child.send({ code, args });
-      } catch (err) {
-        child.kill();
-        throw err;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async run(code: string, args: any[] = []): Promise<any> {
+    const vm = new NodeVM({
+      console: "inherit",
+      require: {
+        external: {
+          modules: [
+            "lodash",
+            "moment",
+            "moment-timezone",
+            "numeral",
+            "axios",
+            "bcryptjs"
+          ],
+          transitive: true
+        }
       }
-    });
+    }).run(code, __filename);
 
-    return result;
+    if (!(vm instanceof Function)) {
+      throw new Error("module.exports is not a function.");
+    }
+
+    return vm(...args);
   }
 }

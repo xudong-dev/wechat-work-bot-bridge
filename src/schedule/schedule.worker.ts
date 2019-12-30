@@ -25,7 +25,7 @@ export class ScheduleWorker extends Worker {
           relations: ["bots"]
         });
 
-        const { value } = await this.sandboxService.run(schedule.code);
+        const value = await this.sandboxService.run(schedule.code);
 
         // eslint-disable-next-line no-restricted-syntax
         for (const bot of schedule.bots) {
