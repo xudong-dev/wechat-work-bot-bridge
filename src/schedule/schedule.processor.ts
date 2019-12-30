@@ -5,12 +5,16 @@ import { Logger, Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import { Job } from "bull";
 import { LoggerModule, PinoLogger } from "nestjs-pino";
 
 import { SandboxModule } from "../sandbox/sandbox.module";
 import { SandboxService } from "../sandbox/sandbox.service";
 import { Schedule } from "./schedule.entity";
+
+const fetch = axios.create({ timeout: 10000 });
+axiosRetry(fetch);
 
 @Module({
   imports: [LoggerModule.forRoot(), TypeOrmModule.forRoot(), SandboxModule]
@@ -45,7 +49,7 @@ let processor = async (job: Job<Schedule["id"]>): Promise<void> => {};
         schedule.bots.map(bot =>
           (async (): Promise<void> => {
             try {
-              await axios.post(bot.webhookUrl, value, { timeout: 10000 });
+              await fetch.post(bot.webhookUrl, value);
             } catch (err) {
               logger.error(
                 { id: bot.id, webhookUrl: bot.webhookUrl },
