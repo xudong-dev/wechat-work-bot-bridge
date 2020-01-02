@@ -58,6 +58,7 @@
     "source-map-support": "^0.5.16",
     "type-graphql": "^0.17.6",
     "typeorm": "^0.2.22",
+    "typeorm-snake-naming-strategy": "^1.0.0",
     "vm2": "^3.8.4"
   },
   "devDependencies": {
