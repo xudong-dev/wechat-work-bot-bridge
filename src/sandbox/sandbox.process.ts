@@ -11,12 +11,13 @@ process.on("message", ({ code = "", args = [] }) => {
     require: {
       external: {
         modules: [
-          "lodash",
-          "moment",
-          "moment-timezone",
-          "numeral",
           "axios",
-          "bcryptjs"
+          "bcryptjs",
+          "graphql-request",
+          "lodash",
+          "moment-timezone",
+          "moment",
+          "numeral"
         ],
         transitive: true
       }
@@ -27,7 +28,6 @@ process.on("message", ({ code = "", args = [] }) => {
     throw new Error("module.exports is not a function.");
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   (async () => {
     try {
       process.send((await vm(...args)) || null);
