@@ -15,6 +15,11 @@ export class AuthResolver {
     @Args("password") password: string
   ): Promise<LoginPayload> {
     const user = await this.authService.validateUser(email, password);
+
+    if (!user) {
+      throw new Error("用户不存在或密码错误");
+    }
+
     const token = await this.authService.generateToken(user);
     return { user, token };
   }
