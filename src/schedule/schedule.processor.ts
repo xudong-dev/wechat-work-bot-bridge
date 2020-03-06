@@ -4,9 +4,9 @@ import "source-map-support/register";
 import { Logger, Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import retry from "async-retry";
 import axios from "axios";
-import axiosRetry from "axios-retry";
-import { Job } from "bull";
+import { Job, Processor } from "bullmq";
 import { LoggerModule, PinoLogger } from "nestjs-pino";
 
 import { SandboxModule } from "../sandbox/sandbox.module";
@@ -14,18 +14,20 @@ import { SandboxService } from "../sandbox/sandbox.service";
 import { Schedule } from "./schedule.entity";
 
 const fetch = axios.create({ timeout: 10000 });
-axiosRetry(fetch);
+
+let processor: Processor = async (): Promise<void> => {
+  //
+};
 
 @Module({
   imports: [LoggerModule.forRoot(), TypeOrmModule.forRoot(), SandboxModule]
 })
-class ProcessorModule {}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-let processor = async (job: Job<Schedule["id"]>): Promise<void> => {};
+class ScheduleProcessorModule {}
 
 (async (): Promise<void> => {
-  const app = await NestFactory.create(ProcessorModule, { logger: false });
+  const app = await NestFactory.create(ScheduleProcessorModule, {
+    ...(process.env.NODE_ENV === "production" ? { logger: false } : {})
+  });
 
   app.useLogger(app.get(Logger));
 
@@ -49,7 +51,16 @@ let processor = async (job: Job<Schedule["id"]>): Promise<void> => {};
         schedule.bots.map(bot =>
           (async (): Promise<void> => {
             try {
-              await fetch.post(bot.webhookUrl, value);
+              await retry(
+                async bail => {
+                  try {
+                    await fetch.post(bot.webhookUrl, value);
+                  } catch (err) {
+                    bail(err);
+                  }
+                },
+                { retries: 5 }
+              );
             } catch (err) {
               logger.error(
                 { id: bot.id, webhookUrl: bot.webhookUrl },
@@ -63,5 +74,4 @@ let processor = async (job: Job<Schedule["id"]>): Promise<void> => {};
   };
 })();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default (job: Job<Schedule["id"]>): Promise<any> => processor(job);
+export default (job: Job): Promise<void> => processor(job);

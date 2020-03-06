@@ -1,16 +1,14 @@
-import { InjectQueue } from "@nestjs/bull";
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
-import { Queue } from "bull";
 import _ from "lodash";
 import { PinoLogger } from "nestjs-pino";
 
 import { Schedule } from "./schedule.entity";
+import { ScheduleQueue } from "./schedule.queue";
 
 @Injectable()
 export class ScheduleService implements OnApplicationBootstrap {
   public constructor(
-    @InjectQueue("schedule")
-    private readonly scheduleQueue: Queue<Schedule["id"]>,
+    private readonly scheduleQueue: ScheduleQueue,
     private readonly logger: PinoLogger
   ) {
     return this;
@@ -35,27 +33,19 @@ export class ScheduleService implements OnApplicationBootstrap {
     await Promise.all(schedules.map(schedule => this.start(schedule)));
   }
 
-  public async start(schedule: Schedule, log = true): Promise<void> {
-    if (log) {
-      this.logger.info(
-        { id: schedule.id, cron: schedule.cron },
-        "schedule start"
-      );
-    }
+  public async start(schedule: Schedule): Promise<void> {
+    this.logger.info(
+      { id: schedule.id, cron: schedule.cron },
+      "schedule start"
+    );
 
-    await this.scheduleQueue.add("schedule", schedule.id, {
-      jobId: schedule.id,
+    await this.scheduleQueue.add(`schedule:${schedule.id}`, schedule.id, {
       repeat: { cron: schedule.cron }
     });
   }
 
-  public async stop(schedule: Schedule, log = true): Promise<void> {
-    if (log) {
-      this.logger.info(
-        { id: schedule.id, cron: schedule.cron },
-        "schedule stop"
-      );
-    }
+  public async stop(schedule: Schedule): Promise<void> {
+    this.logger.info({ id: schedule.id, cron: schedule.cron }, "schedule stop");
 
     await Promise.all(
       (await this.scheduleQueue.getRepeatableJobs())
@@ -68,12 +58,7 @@ export class ScheduleService implements OnApplicationBootstrap {
   }
 
   public async restart(schedule: Schedule): Promise<void> {
-    this.logger.info(
-      { id: schedule.id, cron: schedule.cron },
-      "schedule restart"
-    );
-
-    await this.stop(schedule, false);
-    await this.start(schedule, false);
+    await this.stop(schedule);
+    await this.start(schedule);
   }
 }

@@ -7,7 +7,9 @@ import { Logger } from "nestjs-pino";
 import { AppModule } from "./app.module";
 
 (async (): Promise<void> => {
-  const app = await NestFactory.create(AppModule, { logger: false });
+  const app = await NestFactory.create(AppModule, {
+    ...(process.env.NODE_ENV === "production" ? { logger: false } : {})
+  });
 
   app.useLogger(app.get(Logger));
 

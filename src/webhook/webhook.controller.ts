@@ -9,14 +9,13 @@ import {
   Query
 } from "@nestjs/common";
 import axios from "axios";
-import axiosRetry from "axios-retry";
 import { PinoLogger } from "nestjs-pino";
+import retry from "async-retry";
 
 import { SandboxService } from "../sandbox/sandbox.service";
 import { Webhook } from "./webhook.entity";
 
 const fetch = axios.create({ timeout: 10000 });
-axiosRetry(fetch);
 
 @Controller("webhooks")
 export class WebhookController {
@@ -70,7 +69,16 @@ export class WebhookController {
         webhook.bots.map(bot =>
           (async (): Promise<void> => {
             try {
-              await fetch.post(bot.webhookUrl, value);
+              await retry(
+                async bail => {
+                  try {
+                    await fetch.post(bot.webhookUrl, value);
+                  } catch (err) {
+                    bail(err);
+                  }
+                },
+                { retries: 5 }
+              );
             } catch (err) {
               this.logger.error(
                 { id: bot.id, webhookUrl: bot.webhookUrl },

@@ -1,25 +1,18 @@
-import { BullModule } from "@nestjs/bull";
 import { Module } from "@nestjs/common";
 
+import { ScheduleQueue } from "./schedule.queue";
+import { ScheduleQueueScheduler } from "./schedule.queue-scheduler";
 import { ScheduleResolver } from "./schedule.resolver";
 import { ScheduleService } from "./schedule.service";
-
-const { REDIS_URL } = process.env;
+import { ScheduleWorker } from "./schedule.worker";
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: "schedule",
-      redis: REDIS_URL,
-      processors: [
-        {
-          concurrency: 50,
-          name: "schedule",
-          path: require.resolve("./schedule.processor")
-        }
-      ]
-    })
-  ],
-  providers: [ScheduleResolver, ScheduleService]
+  providers: [
+    ScheduleQueue,
+    ScheduleQueueScheduler,
+    ScheduleResolver,
+    ScheduleService,
+    ScheduleWorker
+  ]
 })
 export class ScheduleModule {}
