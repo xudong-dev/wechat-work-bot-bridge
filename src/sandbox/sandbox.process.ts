@@ -28,7 +28,7 @@ process.on("message", ({ code = "", args = [] }) => {
     throw new Error("module.exports is not a function.");
   }
 
-  (async () => {
+  (async (): Promise<void> => {
     try {
       process.send((await vm(...args)) || null);
     } catch (err) {
