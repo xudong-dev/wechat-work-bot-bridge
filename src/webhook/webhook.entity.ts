@@ -5,11 +5,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
 
 import { Bot } from "../bot/bot.entity";
+import { User } from "../user/user.entity";
 
 @ObjectType()
 @Entity()
@@ -33,6 +35,20 @@ export class Webhook extends BaseEntity {
   @Field()
   @UpdateDateColumn()
   public updatedAt: Date;
+
+  @Field(() => User)
+  @ManyToOne(
+    () => User,
+    user => user.ownWebhooks
+  )
+  owner: User;
+
+  @Field(() => [User])
+  @ManyToMany(
+    () => User,
+    user => user.webhooks
+  )
+  users: User[];
 
   @Field(() => [Bot], { nullable: true })
   @ManyToMany(

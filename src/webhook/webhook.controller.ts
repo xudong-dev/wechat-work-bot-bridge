@@ -8,9 +8,9 @@ import {
   Post,
   Query
 } from "@nestjs/common";
+import retry from "async-retry";
 import axios from "axios";
 import { PinoLogger } from "nestjs-pino";
-import retry from "async-retry";
 
 import { SandboxService } from "../sandbox/sandbox.service";
 import { Webhook } from "./webhook.entity";
@@ -77,7 +77,7 @@ export class WebhookController {
                     bail(err);
                   }
                 },
-                { retries: 5 }
+                { retries: 3 }
               );
             } catch (err) {
               this.logger.error(

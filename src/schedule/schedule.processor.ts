@@ -59,7 +59,7 @@ class ScheduleProcessorModule {}
                     bail(err);
                   }
                 },
-                { retries: 5 }
+                { retries: 3 }
               );
             } catch (err) {
               logger.error(

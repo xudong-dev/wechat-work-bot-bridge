@@ -48,7 +48,7 @@ export class ScheduleWorker extends Worker<Schedule["id"]> {
                     bail(err);
                   }
                 },
-                { retries: 5 }
+                { retries: 3 }
               );
             } catch (err) {
               this.logger.error(

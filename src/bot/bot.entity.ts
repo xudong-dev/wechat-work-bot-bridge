@@ -6,11 +6,13 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
 
 import { Schedule } from "../schedule/schedule.entity";
+import { User } from "../user/user.entity";
 import { Webhook } from "../webhook/webhook.entity";
 
 @ObjectType()
@@ -35,6 +37,20 @@ export class Bot extends BaseEntity {
   @Field()
   @UpdateDateColumn()
   public updatedAt: Date;
+
+  @Field(() => User)
+  @ManyToOne(
+    () => User,
+    user => user.ownBots
+  )
+  owner: User;
+
+  @Field(() => [User])
+  @ManyToMany(
+    () => User,
+    user => user.bots
+  )
+  users: User[];
 
   @Field(() => [Webhook], { nullable: true })
   @JoinTable()

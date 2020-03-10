@@ -5,11 +5,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
 
 import { Bot } from "../bot/bot.entity";
+import { User } from "../user/user.entity";
 
 @ObjectType()
 @Entity()
@@ -41,6 +43,20 @@ export class Schedule extends BaseEntity {
   @Field()
   @UpdateDateColumn()
   public updatedAt: Date;
+
+  @Field(() => User)
+  @ManyToOne(
+    () => User,
+    user => user.ownSchedules
+  )
+  owner: User;
+
+  @Field(() => [User])
+  @ManyToMany(
+    () => User,
+    user => user.schedules
+  )
+  users: User[];
 
   @Field(() => [Bot], { nullable: true })
   @ManyToMany(
