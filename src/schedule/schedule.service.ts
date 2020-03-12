@@ -37,7 +37,9 @@ export class ScheduleService implements OnApplicationBootstrap {
     );
 
     await this.scheduleQueue.add(schedule.id, schedule.id, {
-      repeat: { cron: schedule.cron }
+      repeat: { cron: schedule.cron },
+      removeOnComplete: true,
+      removeOnFail: true
     });
 
     this.logger.info(

@@ -22,16 +22,6 @@ export class ScheduleWorker extends Worker<Schedule["id"]> {
       connection: new Redis(REDIS_URL),
       concurrency: 50
     });
-
-    this.on("completed", (job: Job<Schedule["id"]>) => {
-      this.logger.info({ id: job.data }, "schedule completed");
-      job.remove();
-    });
-
-    this.on("failed", (job: Job<Schedule["id"]>) => {
-      this.logger.info({ id: job.data }, "schedule failed");
-      job.remove();
-    });
   }
 
   // eslint-disable-next-line class-methods-use-this
