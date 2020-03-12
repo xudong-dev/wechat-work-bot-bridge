@@ -1,33 +1,20 @@
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
-import { Job } from "bullmq";
 import _ from "lodash";
 import { PinoLogger } from "nestjs-pino";
 
 import { Schedule } from "./schedule.entity";
 import { ScheduleQueue } from "./schedule.queue";
-import { ScheduleWorker } from "./schedule.worker";
 
 @Injectable()
 export class ScheduleService implements OnApplicationBootstrap {
   public constructor(
     private readonly scheduleQueue: ScheduleQueue,
-    private readonly scheduleWorker: ScheduleWorker,
     private readonly logger: PinoLogger
   ) {
     return this;
   }
 
   public async onApplicationBootstrap(): Promise<void> {
-    this.scheduleWorker.on("completed", (job: Job<Schedule["id"]>) => {
-      this.logger.info({ id: job.data }, "schedule completed");
-      job.remove();
-    });
-
-    this.scheduleWorker.on("failed", (job: Job<Schedule["id"]>) => {
-      this.logger.info({ id: job.data }, "schedule failed");
-      job.remove();
-    });
-
     const schedules = await Schedule.find({ where: { enable: true } });
 
     // 启动时检查清除无效的可重复的任务

@@ -1,5 +1,7 @@
+/* eslint-disable */
 import "dotenv/config";
 import "source-map-support/register";
+/* eslint-enable */
 
 import { Logger, Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
@@ -7,6 +9,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import retry from "async-retry";
 import axios from "axios";
 import { Job, Processor } from "bullmq";
+
 import { LoggerModule, PinoLogger } from "nestjs-pino";
 
 import { SandboxModule } from "../sandbox/sandbox.module";
