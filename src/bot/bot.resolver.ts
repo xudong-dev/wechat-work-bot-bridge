@@ -1,6 +1,5 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { ID } from "type-graphql";
+import { Args, ID, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { AuthGuard } from "../auth/auth.guard";
 import { Bot } from "./bot.entity";

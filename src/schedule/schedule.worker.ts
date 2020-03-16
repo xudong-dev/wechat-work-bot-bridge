@@ -18,7 +18,7 @@ export class ScheduleWorker extends Worker<Schedule["id"]> {
     private readonly logger: PinoLogger,
     private readonly sandboxService: SandboxService
   ) {
-    super("schedule", job => this.processor(job), {
+    super("schedule", require.resolve("./schedule.processor"), {
       connection: new Redis(REDIS_URL),
       concurrency: 50
     });
