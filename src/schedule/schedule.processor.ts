@@ -18,8 +18,15 @@ import { Schedule } from "./schedule.entity";
 
 const fetch = axios.create({ timeout: 10000 });
 
-let processor: Processor = async (): Promise<void> => {
-  //
+let processor: Processor = function waitProcessor(job): Promise<void> {
+  return new Promise(resolve => {
+    const timer = setInterval(() => {
+      if (processor !== waitProcessor) {
+        resolve(processor(job));
+        clearInterval(timer);
+      }
+    }, 1000);
+  });
 };
 
 @Module({
@@ -40,7 +47,7 @@ class ScheduleProcessorModule {}
   logger.info("schedule processor start");
 
   processor = async (job: Job<Schedule["id"]>): Promise<void> => {
-    logger.info({ id: job.data }, "call schedule");
+    logger.info({ pid: process.pid, id: job.data }, "call schedule");
 
     const schedule = await Schedule.findOne({
       where: { id: job.data },
