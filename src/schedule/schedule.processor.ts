@@ -44,10 +44,8 @@ class ScheduleProcessorModule {}
   const logger = await app.resolve(PinoLogger);
   const sandboxService = app.get(SandboxService);
 
-  logger.info("schedule processor start");
-
   processor = async (job: Job<Schedule["id"]>): Promise<void> => {
-    logger.info({ pid: process.pid, id: job.data }, "call schedule");
+    logger.info({ id: job.data }, "call schedule");
 
     const schedule = await Schedule.findOne({
       where: { id: job.data },
@@ -82,6 +80,8 @@ class ScheduleProcessorModule {}
       );
     }
   };
+
+  logger.info("schedule processor started");
 })();
 
 export default (job: Job): Promise<void> => processor(job);
