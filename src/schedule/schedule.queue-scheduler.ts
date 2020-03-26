@@ -4,17 +4,17 @@ import { PinoLogger } from "nestjs-pino";
 
 const { REDIS_URL } = process.env;
 
-const { host, port, password } = new URL(REDIS_URL);
-const connection = { host, port: Number(port), password };
+const { hostname, port, password } = new URL(REDIS_URL);
+const connection = {
+  host: hostname,
+  port: Number(port),
+  password
+};
 
 @Injectable()
 export class ScheduleQueueScheduler extends QueueScheduler {
   constructor(private readonly logger: PinoLogger) {
-    super("schedule", {
-      connection,
-      stalledInterval: 100,
-      maxStalledCount: 0
-    });
+    super("schedule", { connection });
 
     this.on("failed", (jobId: string, err: Error) => {
       this.logger.error({ jobId, err }, "queue scheduler failed");

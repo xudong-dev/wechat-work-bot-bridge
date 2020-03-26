@@ -5,8 +5,12 @@ import { Schedule } from "./schedule.entity";
 
 const { REDIS_URL } = process.env;
 
-const { host, port, password } = new URL(REDIS_URL);
-const connection = { host, port: Number(port), password };
+const { hostname, port, password } = new URL(REDIS_URL);
+const connection = {
+  host: hostname,
+  port: Number(port),
+  password
+};
 
 @Injectable()
 export class ScheduleQueue extends Queue<Schedule["id"]> {
