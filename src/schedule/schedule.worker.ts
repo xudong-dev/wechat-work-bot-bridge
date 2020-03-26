@@ -11,7 +11,7 @@ export class ScheduleWorker extends Worker<Schedule["id"]> {
   constructor() {
     super("schedule", require.resolve("./schedule.processor"), {
       connection: new Redis(REDIS_URL),
-      concurrency: 2
+      concurrency: 50
     });
   }
 }
