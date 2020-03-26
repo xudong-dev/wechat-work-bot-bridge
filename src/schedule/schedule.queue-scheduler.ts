@@ -1,15 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { QueueScheduler } from "bullmq";
-import Redis from "ioredis";
 import { PinoLogger } from "nestjs-pino";
 
 const { REDIS_URL } = process.env;
+
+const { host, port, password } = new URL(REDIS_URL);
+const connection = { host, port: Number(port), password };
 
 @Injectable()
 export class ScheduleQueueScheduler extends QueueScheduler {
   constructor(private readonly logger: PinoLogger) {
     super("schedule", {
-      connection: new Redis(REDIS_URL),
+      connection,
       stalledInterval: 100,
       maxStalledCount: 0
     });

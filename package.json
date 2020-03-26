@@ -44,7 +44,6 @@
     "graphql-request": "^1.8.2",
     "graphql-tools": "^4.0.7",
     "graphql-type-json": "^0.3.1",
-    "ioredis": "^4.16.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
