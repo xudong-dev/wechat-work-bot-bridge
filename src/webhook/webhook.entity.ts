@@ -7,7 +7,7 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from "typeorm";
 
 import { Bot } from "../bot/bot.entity";
@@ -37,26 +37,16 @@ export class Webhook extends BaseEntity {
   public updatedAt: Date;
 
   @Field(() => User)
-  @ManyToOne(
-    () => User,
-    user => user.ownWebhooks
-  )
+  @ManyToOne(() => User, (user) => user.ownWebhooks)
   owner: User;
 
   @Field(() => [User])
-  @ManyToMany(
-    () => User,
-    user => user.webhooks
-  )
+  @ManyToMany(() => User, (user) => user.webhooks)
   users: User[];
 
   @Field(() => [Bot], { nullable: true })
-  @ManyToMany(
-    () => Bot,
-    bot => bot.webhooks,
-    {
-      onDelete: "CASCADE"
-    }
-  )
+  @ManyToMany(() => Bot, (bot) => bot.webhooks, {
+    onDelete: "CASCADE",
+  })
   public bots?: Bot[];
 }

@@ -1,0 +1,43 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "standard",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier/@typescript-eslint"
+  ],
+  "plugins": ["@typescript-eslint", "simple-import-sort"],
+  "rules": {
+    "no-console": "off",
+    "simple-import-sort/sort": "error",
+    "import/prefer-default-export": "off",
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "js": "never",
+        "ts": "never"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "rules": {
+        "import/no-cycle": "off"
+      }
+    },
+    {
+      "files": [
+        "*.controller.ts",
+        "*.queue.ts",
+        "*.resolver.ts",
+        "*.service.ts"
+      ],
+      "rules": {
+        "class-methods-use-this": "off"
+      }
+    }
+  ]
+}

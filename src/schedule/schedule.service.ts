@@ -27,7 +27,7 @@ export class ScheduleService implements OnApplicationBootstrap {
         })
     );
 
-    await Promise.all(schedules.map(schedule => this.start(schedule)));
+    await Promise.all(schedules.map((schedule) => this.start(schedule)));
   }
 
   public async start(schedule: Schedule): Promise<void> {
@@ -39,7 +39,7 @@ export class ScheduleService implements OnApplicationBootstrap {
     await this.scheduleQueue.add(schedule.id, schedule.id, {
       repeat: { cron: schedule.cron },
       removeOnComplete: true,
-      removeOnFail: true
+      removeOnFail: true,
     });
 
     this.logger.info(

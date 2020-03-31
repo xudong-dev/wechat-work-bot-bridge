@@ -19,7 +19,7 @@ import { Schedule } from "./schedule.entity";
 const fetch = axios.create({ timeout: 10000 });
 
 let processor: Processor = function waitProcessor(job): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const timer = setInterval(() => {
       if (processor !== waitProcessor) {
         resolve(processor(job));
@@ -30,13 +30,13 @@ let processor: Processor = function waitProcessor(job): Promise<void> {
 };
 
 @Module({
-  imports: [LoggerModule.forRoot(), TypeOrmModule.forRoot(), SandboxModule]
+  imports: [LoggerModule.forRoot(), TypeOrmModule.forRoot(), SandboxModule],
 })
 class ScheduleProcessorModule {}
 
 (async (): Promise<void> => {
   const app = await NestFactory.create(ScheduleProcessorModule, {
-    ...(process.env.NODE_ENV === "production" ? { logger: false } : {})
+    ...(process.env.NODE_ENV === "production" ? { logger: false } : {}),
   });
 
   app.useLogger(app.get(Logger));
@@ -49,18 +49,18 @@ class ScheduleProcessorModule {}
 
     const schedule = await Schedule.findOne({
       where: { id: job.data },
-      relations: ["bots"]
+      relations: ["bots"],
     });
 
     const { value } = await sandboxService.run(schedule.code);
 
     if (value) {
       await Promise.all(
-        schedule.bots.map(bot =>
+        schedule.bots.map((bot) =>
           (async (): Promise<void> => {
             try {
               await retry(
-                async bail => {
+                async (bail) => {
                   try {
                     await fetch.post(bot.webhookUrl, value);
                   } catch (err) {

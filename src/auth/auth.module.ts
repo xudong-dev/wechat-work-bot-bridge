@@ -13,11 +13,11 @@ const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
   imports: [
     JwtModule.register({
       secret: JWT_SECRET,
-      signOptions: { expiresIn: JWT_EXPIRES_IN || "1d" }
+      signOptions: { expiresIn: JWT_EXPIRES_IN || "1d" },
     }),
     PassportModule,
-    UserModule
+    UserModule,
   ],
-  providers: [AuthResolver, AuthService, JwtStrategy]
+  providers: [AuthResolver, AuthService, JwtStrategy],
 })
 export class AuthModule {}

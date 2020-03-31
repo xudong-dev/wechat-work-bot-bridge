@@ -15,7 +15,7 @@ export class SandboxService {
       let logs = "";
 
       const child = fork(require.resolve("./sandbox.process"), [], {
-        stdio: "pipe"
+        stdio: "pipe",
       });
 
       child.on("error", reject);
@@ -42,7 +42,7 @@ export class SandboxService {
           resolve({ logs });
         });
 
-        child.on("message", value => {
+        child.on("message", (value) => {
           clearTimeout(watcher);
           resolve({ value, logs });
         });

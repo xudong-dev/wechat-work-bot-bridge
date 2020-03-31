@@ -17,7 +17,7 @@ export class BotResolver {
   public async bot(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string
   ): Promise<Bot> {
@@ -40,14 +40,14 @@ export class BotResolver {
   public async updateBot(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string,
     @Args("input") input: UpdateBotInput
   ): Promise<Bot> {
     const bot = await Bot.findOne({ where: { id }, relations: ["webhooks"] });
 
-    Object.keys(input).forEach(key => {
+    Object.keys(input).forEach((key) => {
       bot[key] = input[key];
     });
 
@@ -58,7 +58,7 @@ export class BotResolver {
   public async removeBot(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string
   ): Promise<Bot> {

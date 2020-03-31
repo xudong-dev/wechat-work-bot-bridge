@@ -1,6 +1,6 @@
 import { NodeVM } from "vm2";
 
-process.on("uncaughtException", err => {
+process.on("uncaughtException", (err) => {
   process.stderr.write(err.toString());
   process.exit(1);
 });
@@ -17,11 +17,11 @@ process.on("message", ({ code = "", args = [] }) => {
           "lodash",
           "moment-timezone",
           "moment",
-          "numeral"
+          "numeral",
         ],
-        transitive: true
-      }
-    }
+        transitive: true,
+      },
+    },
   }).run(code, __filename);
 
   if (!(vm instanceof Function)) {

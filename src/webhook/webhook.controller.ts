@@ -6,7 +6,7 @@ import {
   HttpCode,
   Param,
   Post,
-  Query
+  Query,
 } from "@nestjs/common";
 import retry from "async-retry";
 import axios from "axios";
@@ -53,24 +53,24 @@ export class WebhookController {
 
     const webhook = await Webhook.findOne({
       where: { id },
-      relations: ["bots"]
+      relations: ["bots"],
     });
 
     const { value } = await this.sandboxService.run(webhook.code, [
       {
         headers,
         query,
-        body
-      }
+        body,
+      },
     ]);
 
     if (value) {
       await Promise.all(
-        webhook.bots.map(bot =>
+        webhook.bots.map((bot) =>
           (async (): Promise<void> => {
             try {
               await retry(
-                async bail => {
+                async (bail) => {
                   try {
                     await fetch.post(bot.webhookUrl, value);
                   } catch (err) {

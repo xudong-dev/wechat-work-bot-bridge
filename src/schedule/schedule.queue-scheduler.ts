@@ -8,7 +8,7 @@ const { hostname, port, password } = new URL(REDIS_URL);
 const connection = {
   host: hostname,
   port: Number(port),
-  password
+  password,
 };
 
 @Injectable()

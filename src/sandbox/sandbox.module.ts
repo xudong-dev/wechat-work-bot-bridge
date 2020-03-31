@@ -4,6 +4,6 @@ import { SandboxService } from "./sandbox.service";
 
 @Module({
   providers: [SandboxService],
-  exports: [SandboxService]
+  exports: [SandboxService],
 })
 export class SandboxModule {}

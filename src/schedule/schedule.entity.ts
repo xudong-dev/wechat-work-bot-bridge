@@ -7,7 +7,7 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from "typeorm";
 
 import { Bot } from "../bot/bot.entity";
@@ -45,26 +45,16 @@ export class Schedule extends BaseEntity {
   public updatedAt: Date;
 
   @Field(() => User)
-  @ManyToOne(
-    () => User,
-    user => user.ownSchedules
-  )
+  @ManyToOne(() => User, (user) => user.ownSchedules)
   owner: User;
 
   @Field(() => [User])
-  @ManyToMany(
-    () => User,
-    user => user.schedules
-  )
+  @ManyToMany(() => User, (user) => user.schedules)
   users: User[];
 
   @Field(() => [Bot], { nullable: true })
-  @ManyToMany(
-    () => Bot,
-    bot => bot.schedules,
-    {
-      onDelete: "CASCADE"
-    }
-  )
+  @ManyToMany(() => Bot, (bot) => bot.schedules, {
+    onDelete: "CASCADE",
+  })
   public bots?: Bot[];
 }

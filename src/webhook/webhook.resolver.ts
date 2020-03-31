@@ -19,7 +19,7 @@ export class WebhookResolver {
   public async webhook(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string
   ): Promise<Webhook> {
@@ -44,17 +44,17 @@ export class WebhookResolver {
   public async updateWebhook(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string,
     @Args("input") input: UpdateWebhookInput
   ): Promise<Webhook> {
     const webhook = await Webhook.findOne({
       where: { id },
-      relations: ["bots"]
+      relations: ["bots"],
     });
 
-    Object.keys(input).forEach(key => {
+    Object.keys(input).forEach((key) => {
       webhook[key] = input[key];
     });
 
@@ -65,13 +65,13 @@ export class WebhookResolver {
   public async removeWebhook(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string
   ): Promise<Webhook> {
     const webhook = await Webhook.findOne({
       where: { id },
-      relations: ["bots"]
+      relations: ["bots"],
     });
     await webhook.remove();
     webhook.id = id;
@@ -82,18 +82,18 @@ export class WebhookResolver {
   public async setWebhookBots(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string,
     @Args({
       name: "botIds",
-      type: () => [ID]
+      type: () => [ID],
     })
     botIds: string[]
   ): Promise<Webhook> {
     const webhook = await Webhook.findOne({
       where: { id },
-      relations: ["bots"]
+      relations: ["bots"],
     });
 
     webhook.bots =

@@ -8,10 +8,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,  ManyToMany,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn} from "typeorm";
+  UpdateDateColumn,
+} from "typeorm";
 
 import { Bot } from "../bot/bot.entity";
 import { Schedule } from "../schedule/schedule.entity";
@@ -42,46 +44,28 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   public updatedAt: Date;
 
-  @OneToMany(
-    () => Bot,
-    bot => bot.owner
-  )
+  @OneToMany(() => Bot, (bot) => bot.owner)
   public ownBots: Bot[];
 
-  @OneToMany(
-    () => Webhook,
-    webhook => webhook.owner
-  )
+  @OneToMany(() => Webhook, (webhook) => webhook.owner)
   public ownWebhooks: Webhook[];
 
-  @OneToMany(
-    () => Schedule,
-    schedule => schedule.owner
-  )
+  @OneToMany(() => Schedule, (schedule) => schedule.owner)
   public ownSchedules: Schedule[];
 
   @Field(() => [Bot])
   @JoinTable()
-  @ManyToMany(
-    () => Bot,
-    bot => bot.users
-  )
+  @ManyToMany(() => Bot, (bot) => bot.users)
   public bots: Bot[];
 
   @Field(() => [Webhook])
   @JoinTable()
-  @ManyToMany(
-    () => Webhook,
-    webhook => webhook.users
-  )
+  @ManyToMany(() => Webhook, (webhook) => webhook.users)
   public webhooks: Webhook[];
 
   @Field(() => [Schedule])
   @JoinTable()
-  @ManyToMany(
-    () => Schedule,
-    schedule => schedule.users
-  )
+  @ManyToMany(() => Schedule, (schedule) => schedule.users)
   public schedules: Schedule[];
 
   @AfterLoad()

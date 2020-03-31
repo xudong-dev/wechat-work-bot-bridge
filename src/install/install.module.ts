@@ -5,6 +5,6 @@ import { InstallResolver } from "./install.resolver";
 
 @Module({
   imports: [UserModule],
-  providers: [InstallResolver]
+  providers: [InstallResolver],
 })
 export class InstallModule {}

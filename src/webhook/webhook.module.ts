@@ -7,6 +7,6 @@ import { WebhookResolver } from "./webhook.resolver";
 @Module({
   imports: [SandboxModule],
   controllers: [WebhookController],
-  providers: [WebhookResolver]
+  providers: [WebhookResolver],
 })
 export class WebhookModule {}

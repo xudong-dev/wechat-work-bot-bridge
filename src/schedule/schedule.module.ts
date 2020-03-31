@@ -14,7 +14,7 @@ import { ScheduleWorker } from "./schedule.worker";
     ScheduleQueueScheduler,
     ScheduleResolver,
     ScheduleService,
-    ScheduleWorker
-  ]
+    ScheduleWorker,
+  ],
 })
 export class ScheduleModule {}

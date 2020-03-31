@@ -20,7 +20,7 @@ export class ScheduleResolver {
   public async schedule(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string
   ): Promise<Schedule> {
@@ -51,17 +51,17 @@ export class ScheduleResolver {
   public async updateSchedule(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string,
     @Args("input") input: UpdateScheduleInput
   ): Promise<Schedule> {
     const schedule = await Schedule.findOne({
       where: { id },
-      relations: ["bots"]
+      relations: ["bots"],
     });
 
-    Object.keys(input).forEach(key => {
+    Object.keys(input).forEach((key) => {
       schedule[key] = input[key];
     });
 
@@ -80,13 +80,13 @@ export class ScheduleResolver {
   public async removeSchedule(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string
   ): Promise<Schedule> {
     const schedule = await Schedule.findOne({
       where: { id },
-      relations: ["bots"]
+      relations: ["bots"],
     });
     await schedule.remove();
     schedule.id = id;
@@ -97,18 +97,18 @@ export class ScheduleResolver {
   public async setScheduleBots(
     @Args({
       name: "id",
-      type: () => ID
+      type: () => ID,
     })
     id: string,
     @Args({
       name: "botIds",
-      type: () => [ID]
+      type: () => [ID],
     })
     botIds: string[]
   ): Promise<Schedule> {
     const schedule = await Schedule.findOne({
       where: { id },
-      relations: ["bots"]
+      relations: ["bots"],
     });
 
     schedule.bots =

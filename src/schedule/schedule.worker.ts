@@ -9,7 +9,7 @@ const { hostname, port, password } = new URL(REDIS_URL);
 const connection = {
   host: hostname,
   port: Number(port),
-  password
+  password,
 };
 
 @Injectable()
@@ -17,7 +17,7 @@ export class ScheduleWorker extends Worker<Schedule["id"]> {
   constructor() {
     super("schedule", require.resolve("./schedule.processor"), {
       connection,
-      concurrency: 50
+      concurrency: 50,
     });
   }
 }
