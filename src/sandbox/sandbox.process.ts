@@ -18,6 +18,7 @@ process.on("message", ({ code = "", args = [] }) => {
           "moment-timezone",
           "moment",
           "numeral",
+          "text-to-image",
         ],
         transitive: true,
       },

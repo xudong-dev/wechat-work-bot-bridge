@@ -52,6 +52,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.3",
     "source-map-support": "^0.5.16",
+    "text-to-image": "^2.2.0",
     "typeorm": "^0.2.24",
     "typeorm-snake-naming-strategy": "^1.0.2",
     "vm2": "^3.9.1"
